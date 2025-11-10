@@ -43,3 +43,42 @@ spring.datasource.url=jdbc:mysql://localhost:3306/nome_do_banco
 spring.datasource.username=seu_usuario
 spring.datasource.password=sua_senha
 spring.jpa.hibernate.ddl-auto=update # Use 'create' ou 'create-drop' para o primeiro uso
+```
+### Conexão em Produção (Azure)
+Para o deploy no Azure App Service, as configurações de conexão devem ser definidas como Variáveis de Aplicação (Application Settings) no portal do Azure, apontando para o IP da sua VM (Servidor MySQL):
+
+```
+SPRING_DATASOURCE_URL = jdbc:mysql://4.174.129.224:3306/algoritmosdb
+SPRING_DATASOURCE_USERNAME = azureuser
+SPRING_DATASOURCE_PASSWORD = [Sua Senha Segura]
+```
+
+### ⚙️ Como Executar Localmente
+Para executar a API localmente, siga os passos abaixo:
+
+1. **Pré-requisitos:**
+
+* **Java Development Kit (JDK) 21 ou superior**
+
+* **Apache Maven 3.6.0 ou superior**
+
+* **Servidor MySQL rodando localmente (ou a VM do Azure acessível).**
+
+2. **Clonar o Repositório:**
+
+```
+  git clone [https://github.com/cursoscertificacoesmeus-code/algorithm-explorer-api.git](https://github.com/cursoscertificacoesmeus-code/algorithm-explorer-api.git)
+  cd api-algoritmo-explorer
+```
+3. **Compilar e Executar:**
+```
+# Limpa, instala as dependências e compila o projeto
+mvn clean install
+
+# Executa a aplicação Spring Boot
+mvn spring-boot:run
+```
+**A API estará disponível em** http://localhost:8080
+
+### 👥 Autor
+* **Rodrigo Marcos Nogueira Pestana**
