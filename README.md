@@ -4,7 +4,7 @@ Projeto acadêmico que fornece a API de backend para o **Explorador de Algoritmo
 
 ## 📖 Descrição e Funcionalidades
 
-API do Algorithm Explorer oferece os seguintes serviços e lógica de negócio:
+A API do Algorithm Explorer oferece os seguintes serviços e lógica de negócio:
 
 * **Algoritmos de Ordenação:** Recebe conjuntos de dados e aplica algoritmos de ordenação clássicos, retornando os passos e o resultado final para análise visual no frontend.
 * **Operações em Grafos:** Permite a criação, manipulação e execução de algoritmos de grafos (como Busca em Largura, Dijkstra, etc.) em estruturas de grafos fornecidas, utilizando a biblioteca JGraphT.
