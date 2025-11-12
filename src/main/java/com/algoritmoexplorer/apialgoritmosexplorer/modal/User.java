@@ -27,6 +27,7 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    // Define o papel padrão para o novo usuário
-    private String role = "USER";
+    @Enumerated(EnumType.STRING) // Armazena o enum como String no banco de dados
+    @Column(nullable = false) // Garante que o role não seja nulo
+    private UserRole role; // Usando o enum UserRole
 }
