@@ -1,6 +1,5 @@
 package com.algoritmoexplorer.apialgoritmosexplorer.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,24 +32,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/register").permitAll()
-                        // O endpoint de login agora é gerenciado pelo formLogin abaixo
+                        // Permitindo acesso público ao nosso endpoint de login manual
+                        .requestMatchers("/api/users/login").permitAll()
                         .requestMatchers("/api/users/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginProcessingUrl("/api/users/login") // URL que o Spring vai "ouvir" para o login
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .successHandler((req, res, auth) -> {
-                            res.setStatus(HttpServletResponse.SC_OK);
-                            res.getWriter().write("Login successful!");
-                        })
-                        .failureHandler((req, res, ex) -> {
-                            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            res.getWriter().write("Login failed: " + ex.getMessage());
-                        })
-                        .permitAll()
                 );
+        // O bloco .formLogin() foi removido
 
         return http.build();
     }

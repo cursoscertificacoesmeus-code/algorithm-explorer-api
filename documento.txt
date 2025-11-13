@@ -1,0 +1,83 @@
+Documentação da API para o Frontend - Autenticação de Usuários
+
+Olá!
+
+Este documento descreve como utilizar os endpoints de cadastro e login da API. A autenticação é baseada em sessão (cookies) e todos os endpoints que recebem dados esperam o formato JSON.
+
+---
+### 1. Cadastro de Novo Usuário
+---
+
+Este endpoint é usado para registrar um novo usuário no sistema.
+
+- **URL:** `/api/users/register`
+- **Método:** `POST`
+- **Headers:**
+  - `Content-Type`: `application/json`
+
+- **Corpo da Requisição (Request Body - JSON):**
+  ```json
+  {
+      "username": "nome_do_usuario",
+      "password": "uma_senha_forte",
+      "email": "usuario@exemplo.com"
+  }
+  ```
+
+- **Resposta de Sucesso (201 CREATED):**
+  A API retornará o objeto do usuário criado (sem a senha).
+
+  ```json
+  {
+      "id": 123,
+      "username": "nome_do_usuario",
+      "password": null,
+      "email": "usuario@exemplo.com",
+      "role": "PERSONAL"
+  }
+  ```
+
+- **Resposta de Erro:**
+  - `400 Bad Request`: Se algum campo estiver faltando ou se o `username` ou `email` já existirem.
+
+---
+### 2. Login de Usuário
+---
+
+Este endpoint autentica um usuário e cria uma sessão para ele.
+
+- **URL:** `/api/users/login`
+- **Método:** `POST`
+- **Headers:**
+  - `Content-Type`: `application/json`
+
+- **Corpo da Requisição (Request Body - JSON):**
+  ```json
+  {
+      "username": "nome_do_usuario",
+      "password": "senha_do_usuario"
+  }
+  ```
+
+- **Resposta de Sucesso (200 OK):**
+  A API retornará uma mensagem de sucesso e, o mais importante, um cookie de sessão chamado `JSESSIONID` no header da resposta (`Set-Cookie`). O navegador (ou cliente de API como o Postman) deve armazenar este cookie automaticamente.
+
+  **Texto da Resposta:** `Login successful!`
+
+- **Resposta de Erro (401 UNAUTHORIZED):**
+  Se as credenciais (`username` ou `password`) estiverem incorretas, a API retornará um status `401 Unauthorized`.
+
+---
+### 3. Fazendo Requisições Autenticadas
+---
+
+Após o login bem-sucedido, o frontend **não precisa fazer nada de especial** para se autenticar nas próximas requisições, desde que o navegador esteja configurado para enviar cookies.
+
+- O navegador deve enviar automaticamente o cookie `JSESSIONID` em todas as chamadas subsequentes para a mesma API (mesmo domínio).
+- A API usará este cookie para identificar o usuário logado e verificar suas permissões.
+
+**Exemplo de chamada autenticada:**
+- `GET /api/users/me/roles` (para ver os próprios roles)
+- `GET /api/users/admin/all` (se o usuário for ADMIN)
+
+Se o cookie não for enviado ou for inválido, a API retornará `403 Forbidden`.
