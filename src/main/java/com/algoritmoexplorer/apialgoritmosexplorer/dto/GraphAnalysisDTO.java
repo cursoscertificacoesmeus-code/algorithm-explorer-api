@@ -15,5 +15,6 @@ public class GraphAnalysisDTO {
     private boolean isWeighted;
     private String graphType;
     private String message;
-    private List<NodeAnalysisDTO> nodeDetails; // Novo campo para detalhes dos nós
+    private List<NodeAnalysisDTO> nodeDetails;
+    private boolean connected; // Campo renomeado de 'isConnected' para 'connected'
 }
