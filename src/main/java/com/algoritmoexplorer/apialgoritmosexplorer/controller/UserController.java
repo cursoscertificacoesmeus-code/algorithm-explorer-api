@@ -13,14 +13,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -48,15 +47,18 @@ public class UserController {
         Authentication authenticationResponse =
                 this.authenticationManager.authenticate(authenticationRequest);
 
-        // Cria um novo contexto de segurança
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-        // Define a autenticação no contexto
         securityContext.setAuthentication(authenticationResponse);
-        // Salva o contexto de segurança na sessão HTTP
         HttpSession session = request.getSession(true);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
 
         return ResponseEntity.ok("Login successful!");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getMyProfile(Principal principal) {
+        UserResponseDTO userProfile = userService.getUserProfile(principal.getName());
+        return ResponseEntity.ok(userProfile);
     }
 
     @GetMapping("/admin/all")
@@ -66,16 +68,10 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    // --- ENDPOINT DE DEBUG ---
-    @GetMapping("/me/roles")
-    public ResponseEntity<List<String>> getMyRoles() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        List<String> roles = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(roles);
+    @GetMapping("/admin/personal")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<List<UserResponseDTO>> getPersonalUsers() {
+        List<UserResponseDTO> users = userService.getPersonalUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 }

@@ -5,6 +5,7 @@ import com.algoritmoexplorer.apialgoritmosexplorer.modal.User;
 import com.algoritmoexplorer.apialgoritmosexplorer.modal.UserRole;
 import com.algoritmoexplorer.apialgoritmosexplorer.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +38,28 @@ public class UserService {
 
     public List<UserResponseDTO> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(user -> new UserResponseDTO(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getRole()))
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<UserResponseDTO> getPersonalUsers() {
+        return userRepository.findByRole(UserRole.PERSONAL).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public UserResponseDTO getUserProfile(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return convertToDto(user);
+    }
+
+    private UserResponseDTO convertToDto(User user) {
+        return new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 }
