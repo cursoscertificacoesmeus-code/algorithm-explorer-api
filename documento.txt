@@ -1,0 +1,90 @@
+Documentação da API para o Frontend - v6 (Análise Detalhada de Grafo)
+
+Olá!
+
+Este documento descreve como utilizar os endpoints da API. A mudança mais recente está na **Parte 2**, na resposta do endpoint de processamento de grafos, que agora inclui uma análise detalhada de cada nó.
+
+---
+### Parte 1: Autenticação e Gerenciamento de Usuários
+---
+
+(Esta parte permanece inalterada)
+
+- **Cadastro:** `POST /api/users/register`
+- **Login:** `POST /api/users/login`
+- **Perfil do Usuário:** `GET /api/users/me`
+- **Admin - Listar Todos:** `GET /api/users/admin/all`
+- **Admin - Listar 'PERSONAL':** `GET /api/users/admin/personal`
+
+---
+### Parte 2: Processamento de Grafo
+---
+
+Endpoint para enviar a estrutura de um grafo para análise no backend.
+
+- **URL:** `/api/graph/process`
+- **Método:** `POST`
+- **Autenticação:** Requerida.
+- **Headers:** `Content-Type: application/json`
+
+#### Corpo da Requisição (Request Body)
+
+A estrutura do corpo da requisição permanece a mesma.
+
+**Exemplo:**
+```json
+{
+  "nodes": [ { "id": "A" }, { "id": "B" }, { "id": "C" } ],
+  "edges": [
+    { "source": "A", "target": "B", "directed": true },
+    { "source": "A", "target": "C", "directed": true }
+  ],
+  "directed": true,
+  "weighted": false,
+  "mixed": false
+}
+```
+
+#### Resposta da API (Response Body) - ATUALIZADO
+
+A resposta da API foi significativamente aprimorada para incluir uma análise detalhada de cada nó.
+
+- **`graphType` (string):** Classifica o tipo geral do grafo (`"Mixed"`, `"Directed"`, `"Undirected"`).
+- **`nodeDetails` (Array<Object>):** Uma lista contendo a análise para cada nó individual.
+  - **`id` (string):** O identificador do nó.
+  - **`inDegree` (number):** O "grau de entrada" - quantas arestas **apontam para** este nó.
+  - **`outDegree` (number):** O "grau de saída" - quantas arestas **saem de** este nó.
+
+**Nota sobre Graus:**
+- Para **grafos não direcionados**, `inDegree` e `outDegree` terão o mesmo valor, que representa o "grau" total do nó (o número de arestas conectadas a ele).
+- Para **grafos direcionados**, eles representam as setas de entrada e saída, respectivamente. Um nó com `inDegree: 0` é uma fonte (ou raiz).
+
+**Exemplo de Resposta de Sucesso (200 OK):**
+```json
+{
+  "nodeCount": 3,
+  "edgeCount": 2,
+  "weighted": false,
+  "graphType": "Directed",
+  "message": "Graph processed successfully. It is a directed graph with 3 nodes and 2 edges.",
+  "nodeDetails": [
+    {
+      "id": "A",
+      "inDegree": 0,
+      "outDegree": 2
+    },
+    {
+      "id": "B",
+      "inDegree": 1,
+      "outDegree": 0
+    },
+    {
+      "id": "C",
+      "inDegree": 1,
+      "outDegree": 0
+    }
+  ]
+}
+```
+
+Com o campo `nodeDetails`, o frontend agora pode facilmente identificar nós de origem, nós de destino, e entender a conectividade de cada parte do grafo.

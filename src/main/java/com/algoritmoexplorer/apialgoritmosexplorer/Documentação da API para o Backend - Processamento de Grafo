@@ -1,0 +1,11 @@
+Próximos Passos Possíveis
+Agora que a base está sólida, podemos começar a adicionar análises mais inteligentes ao GraphService. Algumas ideias:
+•
+Determinar o Tipo de Grafo: Podemos adicionar lógica para classificar o grafo como "Simples", "Multigrafo" ou "Pseudografo" com base na presença de arestas paralelas ou laços.
+•
+Verificar Conectividade: Implementar um algoritmo (como Busca em Largura ou Busca em Profundidade) para determinar se o grafo é conexo.
+•
+Calcular Graus: Calcular o grau de entrada e saída de cada nó.
+•
+Executar Algoritmos: No futuro, este serviço será o lugar perfeito para executar algoritmos mais complexos, como Dijkstra, Kruskal, etc.
+Qual desses próximos passos te interessa mais? Ou você tem outra ideia em mente?
