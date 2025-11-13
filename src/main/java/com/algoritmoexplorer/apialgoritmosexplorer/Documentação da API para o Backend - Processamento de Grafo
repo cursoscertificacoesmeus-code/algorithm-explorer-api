@@ -1,0 +1,86 @@
+Este documento descreve o formato dos dados que o frontend enviará para o endpoint de processamento de grafos. O objetivo é que o backend receba a estrutura completa do grafo desenhado pelo usuário para análise (ex: determinar o tipo de grafo, contar nós e arestas, executar algoritmos, etc.).
+
+Endpoint de Processamento
+URL: /api/graph/process
+Método: POST
+Headers:
+Content-Type: application/json
+Autenticação: Requerida. O frontend enviará o cookie de sessão JSESSIONID automaticamente. O endpoint deve ser protegido para garantir que apenas usuários logados possam processar grafos.
+Estrutura do Corpo da Requisição (JSON)
+O frontend enviará um objeto JSON contendo a topologia do grafo e suas propriedades. A estrutura será a seguinte:
+
+json
+{
+"nodes": [
+{ "id": "string" }
+],
+"edges": [
+{
+"source": "string",
+"target": "string",
+"weight": "number | null",
+"directed": "boolean | undefined"
+}
+],
+"directed": "boolean",
+"weighted": "boolean",
+"mixed": "boolean"
+}
+
+Descrição Detalhada dos Campos
+
+1. nodes
+   Tipo: Array<Object>
+   Descrição: Uma lista de todos os nós (vértices) presentes no grafo.
+   Objeto Nó: Cada objeto na lista contém:
+   id (string): O identificador único do nó.
+
+2. edges
+   Tipo: Array<Object>
+   Descrição: Uma lista de todas as arestas que conectam os nós.
+   Objeto Aresta: Cada objeto na lista contém:
+   source (string): O id do nó de origem da aresta.
+   target (string): O id do nó de destino da aresta.
+   weight (number | null): O peso associado à aresta. Será um número se o grafo for ponderado ("weighted": true) e o usuário tiver inserido um valor. Caso contrário, será null.
+   directed (boolean | undefined): Este campo só é relevante quando "mixed": true. Ele indica se esta aresta específica é direcionada. Se o grafo não for misto, este campo pode ser ignorado ou estar ausente.
+
+3. directed
+   Tipo: boolean
+   Descrição: Uma propriedade global que indica se o grafo deve ser tratado como inteiramente direcionado. Se true, todas as arestas sem uma propriedade directed explícita devem ser consideradas direcionadas.
+
+4. weighted
+   Tipo: boolean
+   Descrição: Uma propriedade global que indica se o grafo é ponderado. Se true, o campo weight nas arestas deve ser considerado.
+
+5. mixed
+   Tipo: boolean
+   Descrição: Uma propriedade global que indica se o grafo é misto, ou seja, pode conter tanto arestas direcionadas quanto não direcionadas. Se true, o backend deve inspecionar a propriedade directed de cada aresta individualmente para determinar seu tipo.
+
+Exemplo de Payload
+Abaixo está um exemplo de um grafo misto e ponderado com 3 nós e 2 arestas: uma direcionada e ponderada de A para B, e outra não direcionada e sem peso de B para C.
+
+json
+{
+"nodes": [
+{ "id": "A" },
+{ "id": "B" },
+{ "id": "C" }
+],
+"edges": [
+{
+"source": "A",
+"target": "B",
+"weight": 10,
+"directed": true
+},
+{
+"source": "B",
+"target": "C",
+"weight": null,
+"directed": false
+}
+],
+"directed": false,
+"weighted": true,
+"mixed": true
+}
