@@ -1,0 +1,76 @@
+Documentação da API para o Frontend - v5 (Análise de Grafo Aprimorada)
+
+Olá!
+
+Este documento descreve como utilizar os endpoints da API. A mudança mais recente está na **Parte 2**, na resposta do endpoint de processamento de grafos.
+
+---
+### Parte 1: Autenticação e Gerenciamento de Usuários
+---
+
+(Esta parte permanece inalterada)
+
+#### 1.1. Cadastro de Novo Usuário
+- **URL:** `POST /api/users/register`
+- **Corpo (JSON):** `{ "username": "...", "password": "...", "email": "..." }`
+
+#### 1.2. Login de Usuário
+- **URL:** `POST /api/users/login`
+- **Corpo (JSON):** `{ "username": "...", "password": "..." }`
+- **Resposta:** Texto "Login successful!" e um cookie de sessão `JSESSIONID`.
+
+#### 1.3. Obter Perfil do Usuário Logado
+- **URL:** `GET /api/users/me`
+- **Resposta:** Objeto JSON com os dados do usuário (`id`, `username`, `email`, `role`).
+
+#### 1.4. Endpoints de Administração (Acesso Restrito a ADMINs)
+- **Listar TODOS os Usuários:** `GET /api/users/admin/all`
+- **Listar APENAS Usuários PERSONAL:** `GET /api/users/admin/personal`
+
+---
+### Parte 2: Processamento de Grafo
+---
+
+Endpoint para enviar a estrutura de um grafo para análise no backend.
+
+- **URL:** `/api/graph/process`
+- **Método:** `POST`
+- **Autenticação:** Requerida.
+- **Headers:** `Content-Type: application/json`
+
+#### Corpo da Requisição (Request Body)
+
+A estrutura do corpo da requisição permanece a mesma.
+
+**Exemplo:**
+```json
+{
+  "nodes": [ { "id": "A" }, { "id": "B" } ],
+  "edges": [ { "source": "A", "target": "B", "weight": 10, "directed": true } ],
+  "directed": false,
+  "weighted": true,
+  "mixed": true
+}
+```
+
+#### Resposta da API (Response Body) - ATUALIZADO
+
+A resposta da API foi aprimorada para ser mais clara e precisa. Os campos booleanos `directed` e `mixed` foram substituídos por um único campo `graphType`.
+
+- **`graphType` (string):** Classifica o grafo com base na análise do backend. Os valores possíveis são:
+  - `"Mixed"`: Se o grafo contém arestas direcionadas e não direcionadas.
+  - `"Directed"`: Se todas as arestas do grafo são direcionadas.
+  - `"Undirected"`: Se todas as arestas do grafo são não direcionadas.
+
+**Exemplo de Resposta de Sucesso (200 OK):**
+```json
+{
+  "nodeCount": 3,
+  "edgeCount": 2,
+  "weighted": true,
+  "graphType": "Mixed",
+  "message": "Graph processed successfully. It is a mixed graph with 3 nodes and 2 edges."
+}
+```
+
+O frontend deve agora usar o campo `graphType` para entender a natureza do grafo analisado.
